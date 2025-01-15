@@ -1,0 +1,11 @@
+{
+    "name": "josea/bng",
+    "description": "Aplicação para a gestão de name gathering",
+    "type": "project",
+    "authors": [
+        {
+            "name": "José Antônio"
+        }
+    ],
+    "require": {}
+}
