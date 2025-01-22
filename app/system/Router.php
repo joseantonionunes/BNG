@@ -2,6 +2,9 @@
 
 namespace bng\System;
 
+use bng\Controllers\Main;
+use Exception;
+
 class Router {
 
     public static function dispatch()
@@ -32,9 +35,13 @@ class Router {
             unset($parameters['mt']);
         }
 
-        var_dump($httpverb);
-        var_dump($controller);
-        var_dump($method);
-        var_dump($parameters);
+        // tries to instanciate the controller and execute the method
+        try {
+            $class = "bng\Controller\\$controller";
+            $controller = new $class();
+            $controller->$method(...$parameters);
+        } catch (Exception $err){
+            die($err->getMessage());
+        }
     }
 }
