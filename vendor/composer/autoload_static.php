@@ -13,11 +13,16 @@ class ComposerStaticInit9426a393a89d91bc6278dcc6408c4e7e
     public static $prefixLengthsPsr4 = array (
         'b' => 
         array (
+            'bng\\System\\' => 11,
             'bng\\Controllers\\' => 16,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
+        'bng\\System\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/app/system',
+        ),
         'bng\\Controllers\\' => 
         array (
             0 => __DIR__ . '/../..' . '/app/controllers',
@@ -27,6 +32,7 @@ class ComposerStaticInit9426a393a89d91bc6278dcc6408c4e7e
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'bng\\Controllers\\Main' => __DIR__ . '/../..' . '/app/controllers/Main.php',
+        'bng\\System\\Router' => __DIR__ . '/../..' . '/app/system/Router.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
