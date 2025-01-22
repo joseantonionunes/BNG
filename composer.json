@@ -14,7 +14,8 @@
             "bng\\System\\":["app/system"]
         },
         "files": [
-              "app/confing.php"
+              "app/confing.php",
+              "app/helpers/functions.php"
         ]
     }
 }

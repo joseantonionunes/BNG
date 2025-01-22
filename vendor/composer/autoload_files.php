@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     '4c94548092e97bad58bf528e070045af' => $baseDir . '/app/confing.php',
+    'f473db7dbb62fc7bb7e22cf8a4b27521' => $baseDir . '/app/helpers/functions.php',
 );

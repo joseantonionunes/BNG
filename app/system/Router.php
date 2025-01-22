@@ -2,13 +2,14 @@
 
 namespace bng\System;
 
-use bng\Controllers\Main;
+use bng\controllers\Main;
 use Exception;
 
 class Router {
 
     public static function dispatch()
     {
+        //main route values
         $httpverb = $_SERVER['REQUEST_METHOD'];
         $controller = 'main';
         $method = 'index';
@@ -18,7 +19,7 @@ class Router {
             $controller = $_GET['ct'];
         }
 
-        if(isset($_GET['ct'])){
+        if(isset($_GET['mt'])){
             $method = $_GET['mt'];
         }
 
@@ -37,7 +38,7 @@ class Router {
 
         // tries to instanciate the controller and execute the method
         try {
-            $class = "bng\Controller\\$controller";
+            $class = "bng\Controllers\\$controller";
             $controller = new $class();
             $controller->$method(...$parameters);
         } catch (Exception $err){

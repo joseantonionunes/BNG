@@ -4,11 +4,10 @@ namespace bng\Controllers;
 
 class Main {
 
-    public function index($id){
+    public function index($id = null){
         
-        echo "Estou dentro do controlador Main - index";
-        echo '<br>';
-        echo "o id indicado foi $id";
+        echo "Estou dentro do controlador Main - index<br>";
+        $nomes = [];
     }
 
     public function teste(){
