@@ -9,7 +9,7 @@ class Main extends BaseController {
     {
         $data['nome'] = "joão";
         $data['apelido'] = "Ribeiro";
-        $this->view('lauots/html_header.php');
+        $this->view('layouts/html_header');
         $this->view('home', $data);
         $this->view('layouts/html_footer');
     }

@@ -6,7 +6,7 @@ require_once('../vendor/autoload.php');
 
 Router::dispatch();
 
-$nomes = ['joao', 'ana', 'carlos'];
+// $nomes = ['joao', 'ana', 'carlos'];
 $nome = "joão ribeiro";
 
-printData($nomes);
+printData($nome);
