@@ -10,6 +10,14 @@ class Agents extends BaseModel{
 
         $this->db_connect();
         return $this->query("SELECT COUNT(*) total FROM agents");
-    
+    }
+
+    public function get_results(){
+
+        $params = [
+            'profile' => 'admin'
+        ];
+        $this->db_connect();
+        return $this->query("SELECT * FROM agents WHERE profile = :profile", $params);
     }
 }
