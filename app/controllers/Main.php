@@ -9,79 +9,74 @@ class Main extends BaseController
 {
     public function index()
     {
+        // check if there is no active user in session
+        if(!check_session()){
+            $this->login_frm();
+            return;
+        }
+
         $this->view('layouts/html_header');
-
-        // login
-        $this->view('login_frm');
-
-        // esqueci-me da password (formulário)
-        // $this->view('reset_password_frm');
-
-        // esqueci-me da password - email enviado
-        // $this->view('reset_password_email_sent');
-
-        // esqueci-me da password - introduza o código
-        // $this->view('reset_password_insert_code');
-        
-        // esqueci-me da password - definir nova password
-        // $this->view('reset_password_define_password_frm');
-        
-        // esqueci-me da password - definir nova password
-        // $this->view('reset_password_define_password_success');
-        
-        // nav bar
-        $this->view('navbar');
-        
-        // homepage
-        // $this->view('homepage');
-        
-        // meus clientes
-        // $this->view('agent_clients');
-        
-        // inserir novo cliente
-        // $this->view('insert_client_frm');
-        
-        // upload de ficheiro de clientes
-        // $this->view('upload_file_with_clients_frm');
-
-        // editar cliente
-        // $this->view('edit_client_frm');
-
-        // confirmar eliminação de cliente
-        // $this->view('delete_client_confirmation');
-        
-        // perfil - alterar a password
-        // $this->view('profile_change_password_frm');
-        
-        // perfil - password alterada com sucesso
-        // $this->view('profile_change_password_success'); 
-        
-        // global clientes - para visualização dos clientes pelo admin
-        // $this->view('global_clients');
-        
-        // ---------------
-        // gestão de agentes - quadro inicial
-        // $this->view('agents_managment');
-        
-        // gestão de agentes - adicionar agente formulário
-        // $this->view('agents_add_new_frm');
-
-        // envio de email para conclusão da password
-        // $this->view('agents_email_sent');    
-        
-        // gestão de agentes - editar agente formulário
-        // $this->view('agents_edit_frm');
-        
-        // gestão de agentes - confirmar eliminação
-        // $this->view('agents_delete_confirmation');
-
-        // gestão de agentes - confirmar reativação
-        // $this->view('agents_recover_confirmation'); 
-
-        // stats
-        // $this->view('stats'); 
-
-        $this->view('footer');
+        echo '<h3 class="text-white text-center">Olá Mundol</h3>';
         $this->view('layouts/html_footer');
+        
+    }
+
+    // LOGIN
+    public function login_frm(){
+
+        // check if there is already a user in the session
+        if(!check_session()){
+
+            $this->index();
+            return;
+        }
+
+        //check if there are arrars (after login_submit)
+        $data = [];
+        if(!empty($_SESSION['validation_errars'])){
+
+            $data['validation_errors'] = $_SESSION['validation_errors'];
+            unset($_SESSION['validation_errors']);
+        }
+
+        // display login form
+        $this->view('layouts/html_header');
+        $this->view('login_frm', $data);
+        $this->view('layouts/html_footer');
+    }
+
+    public function login_submit(){
+
+        // check if there is aiready an active session
+        if(check_session()){
+            $this->index();
+            return;
+        }
+
+        // check if there was a post request
+        if($_SESSION['REQUEST_METHOD'] != 'POST'){
+
+            $this->index();
+            return;
+        }
+
+        // form validation
+        $validation_errors = [];
+        if(empty($_POST['text_username']) || empty($_POST['text_password'])){
+            $validation_errors[] = "Username e password são obrigatorios.";
+        }
+
+        // check if there are validation errors
+        if(!empty($validation_errors)){
+            $_SESSION['validation_errors'] = $validation_errors;
+            $this->login_frm();
+            return;
+        }
+
+        // get form data
+        $username = $_POST['text_username'];
+        $password = $_POST['text_password'];
+
+        echo $username . '<br>' . $password;
     }
 }
