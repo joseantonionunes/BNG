@@ -1,15 +1,15 @@
 <?php
 
-function printData($data, $die = true){
-
+function printData($data, $die = true)
+{
     echo '<pre>';
     if(is_object($data) || is_array($data)){
         print_r($data);
-    } else{
+    } else {
         echo $data;
     }
 
     if($die){
-        die('<br>FIM<br>');
+        die('<br>FIM</br>');
     }
 }

@@ -1,10 +1,11 @@
 {
-    "name": "josea/bng",
-    "description": "Aplicação para a gestão de name gathering",
+    "name": "sys4soft/bng",
+    "description": "Aplicacao para gestao de name gathering.",
     "type": "project",
     "authors": [
         {
-            "name": "José Antônio"
+            "name": "Joao Ribeiro",
+            "email": "joaoribeiro@gmail.com"
         }
     ],
     "require": {},
@@ -14,9 +15,9 @@
             "bng\\Models\\":["app/models"],
             "bng\\System\\":["app/system"]
         },
-        "files": [
-              "app/confing.php",
-              "app/helpers/functions.php"
+        "files":[
+            "app/config.php",
+            "app/helpers/functions.php"
         ]
     }
 }
