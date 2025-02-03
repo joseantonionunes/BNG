@@ -4,6 +4,7 @@ namespace bng\Controllers;
 
 use bng\Controllers\BaseController;
 use bng\Models\Agents;
+ini_set('memory_limit', '512M');
 
 class Main extends BaseController
 {
@@ -15,11 +16,17 @@ class Main extends BaseController
             return;
         }
 
+        $data['user'] = $_SESSION['user'];
+
         $this->view('layouts/html_header');
-        echo '<h3 class="text-white text-center">Olá Mundol</h3>';
+        $this->view('navbar', $data);
+        $this->view('homepage', $data);
+        $this->view('footer');
         $this->view('layouts/html_footer');
         
     }
+
+    // ===========================================================
 
     // LOGIN
     public function login_frm(){
@@ -39,11 +46,20 @@ class Main extends BaseController
             unset($_SESSION['validation_errors']);
         }
 
+        // check if there was an invalid login
+        if(!empty($_SESSION['server_errar'])){
+
+            $data['server_error'] = $_SESSION['server_error'];
+            unset($_SESSION['server_error']);
+        }
+
         // display login form
         $this->view('layouts/html_header');
         $this->view('login_frm', $data);
         $this->view('layouts/html_footer');
     }
+
+    // ===========================================================
 
     public function login_submit(){
 
@@ -100,11 +116,35 @@ class Main extends BaseController
 
         $model = new Agents();
         $results = $model->check_login($username, $password);
-        if($results['status']){
-            echo 'OK';
-        } else {
-            echo 'NOK';
+        if(!$results['status']) {
+
+            // invalid login
+            $_SESSION['server_error'] = 'Login invalido';
+            $this->login_frm();
+            return;
         }
+
+        // load user information to the session
+        $results = $model->get_user_data($username);
         
+        // add user to session
+        $_SESSION['user'] = $results['data'];
+
+        echo 'OK';
+
+        // update the last login
+        $results = $model->set_user_last_login($_SESSION['user']->id);
+
+        // go to main page
+        
+    }
+
+    // ===========================================================
+    public function logout(){
+        // clear user from session
+        unset($_SESSION['user']);
+
+        // go to index (login form)
+        $this->index();
     }
 }
