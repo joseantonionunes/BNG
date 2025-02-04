@@ -6,6 +6,42 @@ function check_session(){
     return isset($_SESSION['user']);
 }
 
+function logger($message = '', $level = 'info'){
+
+    //create log channel
+    $log = new logger('app_logs');
+    $log->pushHandler(new StreamHandler(LOGS_PATH));
+
+    // add log message
+    switch ($level) {
+        case 'info':
+            $log->info($message);
+            break;
+        case 'notice':
+            $log->notice($message);
+            break;
+        case 'warning':
+            $log->warning($message);
+            break;
+        case 'error':
+            $log->error($message);
+            break;
+        case 'critical':
+            $log->critical($message);
+            break;
+        case 'alert':
+            $log->alert($message);
+            break;
+        case 'energency':
+            $log->energency($message);
+            break;
+        
+        default:
+            $log->info($message);
+            break;
+    }
+}
+
 function printData($data, $die = true)
 {
     echo '<pre>';

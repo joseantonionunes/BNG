@@ -118,11 +118,17 @@ class Main extends BaseController
         $results = $model->check_login($username, $password);
         if(!$results['status']) {
 
+            // Logger
+            logger("$username - Login inválido", 'error');
+
             // invalid login
             $_SESSION['server_error'] = 'Login invalido';
             $this->login_frm();
             return;
         }
+
+        // logger
+        logger("$username - Login com sucesso");
 
         // load user information to the session
         $results = $model->get_user_data($username);
@@ -141,6 +147,16 @@ class Main extends BaseController
 
     // ===========================================================
     public function logout(){
+
+        // disable direct access to logout
+        if (!check_session()){
+            $this->index();
+            return;
+        }
+
+        // Logger
+        logger($_SESSION['user']->name . ' - fez logout');
+        
         // clear user from session
         unset($_SESSION['user']);
 
