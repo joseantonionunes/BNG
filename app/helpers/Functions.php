@@ -1,5 +1,8 @@
 <?php
 
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
+
 function check_session(){
 
     // check if there is an active session
@@ -9,7 +12,7 @@ function check_session(){
 function logger($message = '', $level = 'info'){
 
     //create log channel
-    $log = new logger('app_logs');
+    $log = new Logger('app_logs');
     $log->pushHandler(new StreamHandler(LOGS_PATH));
 
     // add log message
@@ -32,8 +35,8 @@ function logger($message = '', $level = 'info'){
         case 'alert':
             $log->alert($message);
             break;
-        case 'energency':
-            $log->energency($message);
+        case 'emergency':
+            $log->emergency($message);
             break;
         
         default:
