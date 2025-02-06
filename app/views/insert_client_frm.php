@@ -68,3 +68,9 @@
         </div>
     </div>
 </div>
+
+<script>
+    flatpickr("#text_birthdate", {
+        dateFormat: "d-m-Y"
+    })
+</script>

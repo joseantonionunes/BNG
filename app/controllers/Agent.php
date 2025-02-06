@@ -36,8 +36,9 @@ class Agent extends BaseController{
         }
 
         $data['user'] = $_SESSION['user'];
+        $data['flarpickr'] = true;
 
-        $this->view('layouts/html_header');
+        $this->view('layouts/html_header', $data);
         $this->view('navbar', $data);
         $this->view('insert_client_frm');
         $this->view('footer');
