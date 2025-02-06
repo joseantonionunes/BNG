@@ -33,19 +33,21 @@
                         </tr>
                     </thead>
                     <tbody>
+                    <?php foreach($clients as $client): ?>
                         <tr>
-                            <td>[Nome do cliente]</td>
-                            <td class="text-center">[Sexo]</td>
-                            <td class="text-center">[Data nascimento]</td>
-                            <td>[Email]</td>
-                            <td class="text-center">[Telefone]</td>
-                            <td>[Interesses]</td>
+                            <td><?= $client->name ?></td>
+                            <td class="text-center"><?= $client->gender ?></td>
+                            <td class="text-center"><?= $client->birthdate ?></td>
+                            <td><?= $client->email ?></td>
+                            <td class="text-center"><?= $client->phone ?></td>
+                            <td><?= $client->interests ?></td>
                             <td class="text-end">
-                                <a href="#"><i class="fa-regular fa-pen-to-square me-2"></i>Editar</a>
+                                <a href="?ct=agent&mt=edit_client&id=<?= $client->id ?>"><i class="fa-regular fa-pen-to-square me-2"></i>Editar</a>
                                 <span class="mx-2 opacity-50">|</span>
-                                <a href="#"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</a>
+                                <a href="?ct=agent&mt=delete_client&id=<?= $client->id ?>"><i class="fa-solid fa-trash-can me-2"></i>Eliminar</a>
                             </td>
                         </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
 

@@ -28,4 +28,13 @@ class Agent extends BaseController{
         $this->view('layouts/html_footer');
         
     }
+
+    // ===========================================================
+    public function edit_client($id){
+        echo "editar $id";
+    }
+    // ===========================================================
+    public function delete_client($id){
+        echo "delete $id";
+    }
 }
