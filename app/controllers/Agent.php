@@ -38,16 +38,81 @@ class Agent extends BaseController{
         $data['user'] = $_SESSION['user'];
         $data['flarpickr'] = true;
 
+        // check if there are validation errors
+        if(!empty($_SESSION['validation_erros'])){
+            $data['validation_errors'] = $_SESSION['validation_erros'];
+            unset($_SESSION['validation_errors']);
+        }
+
         $this->view('layouts/html_header', $data);
         $this->view('navbar', $data);
-        $this->view('insert_client_frm');
+        $this->view('insert_client_frm', $data);
         $this->view('footer');
         $this->view('layouts/html_footer');
     }
+
     // ===========================================================
     public function new_client_submit(){
         if(!check_session() || $_SESSION['user']->profile != 'agent' || $_SERVER['REQUEST_METHOD'] != 'POST'){
             header('Location: index.php');
+        }
+
+        // form validation
+        $validation_errors = [];
+
+        // text name
+        if (empty($_POST['text_name'])) {
+            $validation_errors[] = "Name é de prenchimento obrigatório.";
+        }else {
+            if (strlen($_POST['text_name']) < 3 || strlen($_POST['text_name']) > 50 ){
+                $validation_errors[] = "O name deve ter entre 3 e 50 caracteres.";
+            }
+        }
+
+        // gender
+        if(empty($_POST['radion_gender'])) {
+            $validation_errors[] = "E obrigatorio definir o genero";
+        }
+
+        // text_birthdate
+        if(empty($_POST['text_birthdate'])) {
+            $validation_errors[] = "Data de nascimento é obrigatoria.";
+        } else {
+            // check if birthdate is valid and is older than today
+            $birthdate = \DateTime::createFromFormat('d-m-y', $_POST['text-birthdate']);
+            if(!$birthdate) {
+                $validation_errors[] = "A data de nascimento não está no formato correto";
+            }else {
+                $today = new \DateTime();
+                if($birthdate >= $today){
+                    $validation_errors[] = "A data de nascimento tem que ser anterior ao dia anterior ao dia atual.";
+                }
+            }
+        }
+
+        // email
+        if(empty($_POST['text_email'])) {
+            $validation_errors[] = "Email é de preenchimento obrigatório.";
+        } else {
+            if(!filter_var($_POST['text_email'], FILTER_VALIDATE_EMAIL)){
+                $validation_errors[] = "Email não é valido.";
+            }
+        }
+
+        // phone
+        if(empty($_POST['text_phone'])) {
+            $validation_errors[] = "Telefone é de preenchimento obrigatório.";
+        } else {
+            if(!preg_match("*/^9{1}\d{8}$/", $_POST['text_phone'])){
+                $validation_errors[] = "O telefone deve começar por 9 e ter 9 algarismos no total.";
+            }
+        }
+
+        // check if there are validation errors to return to the form
+        if(!empty($validation_errors)){
+            $_SESSION['validation_errors'] = $validation_errors;
+            $this->new_client_frm();
+            return;
         }
 
         printData($_POST);
