@@ -112,4 +112,67 @@ class Agents extends BaseModel
             'data' => $results->results
         ];
     }
+
+    // =======================================================
+    public function check_if_client_exists($post_data){
+        // check if there is aiready a client with the same name
+        $params = [
+            ':id_agent' => $_SESSION['user']->id,
+            ':client_name' => $post_data['text_name']
+        ];
+
+        $this->db_connect();
+        $results = $this->query(
+            "SELECT id FROM persons " .
+            "WHERE AES_ENCRYPT(:client_name, '" . MYSQL_AES_KEY . "') = name " .
+            "AND id_agent = :id_agent",
+            $params
+        );
+
+        if($results->affected_rows == 0){
+            return [
+                'status' => false
+            ];
+        } else {
+            return [
+                'status' => true
+            ];
+        }
+    }
+
+    // =======================================================
+    public function add_new_client_to_database($post_data)
+    {
+        // add new client to database
+
+        $birthdate = new \DateTime($post_data['text_birthdate']);
+
+        $params = [
+            ':name' => $post_data['text_name'],
+            ':gender' => $post_data['radio_gender'],
+            ':birthdate' => $birthdate->format('Y-m-d H:i:s'),
+            ':email' => $post_data['text_email'],
+            ':phone' => $post_data['text_phone'],
+            ':interests' => $post_data['text_interests'],
+            ':id_agent' => $_SESSION['user']->id
+        ];
+
+        $this->db_connect();
+        $this->non_query(
+            "INSERT INTO persons VALUES(" .
+                "0, " .
+                "AES_ENCRYPT(:name, '" . MYSQL_AES_KEY . "'), " .
+                ":gender, " .
+                ":birthdate, " .
+                "AES_ENCRYPT(:email, '" . MYSQL_AES_KEY . "'), " .
+                "AES_ENCRYPT(:phone, '" . MYSQL_AES_KEY . "'), " .
+                ":interests, " .
+                ":id_agent, " .
+                "NOW(), " .
+                "NOW(), " .
+                "NULL" .
+                ")",
+            $params
+        );
+    }
 }

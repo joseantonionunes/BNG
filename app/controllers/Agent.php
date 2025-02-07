@@ -8,7 +8,7 @@ use bng\Models\Agents;
 class Agent extends BaseController{
 
     // ===========================================================
-    public function my_clientes(){
+    public function my_clients(){
         if(!check_session() || $_SESSION['user']->profile != 'agent') {
             header('Location: index.php');
         }
@@ -42,6 +42,12 @@ class Agent extends BaseController{
         if(!empty($_SESSION['validation_erros'])){
             $data['validation_errors'] = $_SESSION['validation_erros'];
             unset($_SESSION['validation_errors']);
+        }
+
+        // check if there is a server erro
+        if(!empty($_SESSION['validation_errors'])){
+            $data['server_error'] = $_SESSION['server_error'];
+            unset($_SESSION['server_error']);
         }
 
         $this->view('layouts/html_header', $data);
@@ -115,7 +121,22 @@ class Agent extends BaseController{
             return;
         }
 
-        printData($_POST);
+        // check if the client already exists with the same name
+        $model = new Agents();
+        $results = $model->check_if_client_exists($_POST);
+
+        if($results['status']){
+            // a person with the same name exists for this agent. Returns a server error
+            $_SESSION['server_error'] = "Já existe um cliente com esse nome";
+            $this->new_client_frm();
+            return;
+        }
+
+        // add new client to the database
+        $model->add_new_client_to_database($_POST);
+
+        // return to the main clients page
+        $this->my_clients();
     }
 
     // ===========================================================
