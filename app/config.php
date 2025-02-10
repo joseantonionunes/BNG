@@ -12,3 +12,7 @@ define('MYSQL_AES_KEY',      'Vduu47ql51nLn6bkYkU6N(O1nivsmdfD');
 
 // log
 define('LOGS_PATH', __DIR__ . '/../logs/app.log');
+
+// openssl
+define('OPENSSL_KEY',          'H0SDRQzIGqclX2kbYBK9U5f3Wa');
+define('OPENSSL_IV',           'BzKAbjuREsHgnw56');
