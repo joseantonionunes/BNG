@@ -166,10 +166,17 @@ class Agent extends BaseController{
         }
 
         $data['client'] = $results['data'];
+        $data['client']->birthdate = date('d-m-Y', strtotime($data['client']->birthdate));
 
         // display the edit client form
         $data['user'] = $_SESSION['user'];
         $data['flatpickr'] = true;
+
+        // display the edit client form
+        if(!empty($_SESSION['validation_errors'])){
+            $data['validation_errors'] = $_SESSION['validation_errors'];
+            unset($_SESSION['validation_errors']);
+        }
 
         $this->view('layouts/html_header', $data);
         $this->view('navbar', $data);
