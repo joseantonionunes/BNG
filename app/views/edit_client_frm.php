@@ -68,6 +68,12 @@
                                 </div>
                             <?php endif; ?>
 
+                            <?php if(isset($server_error)): ?>
+                                <div class="alert alert-danger p-2 text-center">
+                                    <?= $server_error ?>
+                                </div>
+                            <?php endif; ?>
+
                         </form>
                     </div>
                 </div>
