@@ -289,6 +289,57 @@ class Agent extends BaseController{
 
     // ===========================================================
     public function delete_client($id){
-        echo "delete " . aes_decrypt($id);
+        if(!check_session() || $_SESSION['user']->profile != 'agent'){
+            header('Location: index.php');
+        }
+
+        //check if the $id is valid
+        $id_client = aes_decrypt($id);
+        if(!$id_client){
+            // id_client is valid
+            header('Location: index.php');
+        }
+
+        // loads the model to get the client1s data
+        $model = new Agents();
+        $results = $model->get_client_data($id_client);
+
+        if(empty($results['data'])){
+            header('Location: index.php');
+        }
+
+        // display the view
+        $data['user'] = $_SESSION['user'];
+        $data['client'] = $results['data'];
+
+        $this->view('layouts/html_header');
+        $this->view('navbar', $data);
+        $this->view('delete_client_confirmation', $data);
+        $this->view('footer');
+        $this->view('layouts/html_footer');
+    }
+
+    // ===========================================================
+    public function delete_client_confirm($id){
+        if(!check_session() || $_SESSION['user']->profile != 'agent'){
+            header('Location: index.php');
+        }
+
+        //check if the $id is valid
+        $id_client =aes_decrypt($id);
+        if(!$id_client){
+            // id_client is invalid
+            header('Location: index.php');
+        }
+
+        // loads the model to delete the client's data
+        $model = new Agents();
+        $model->delete_client($id_client);
+
+        // logger
+        logger(get_current_user() . ' - Eliminado o cliente id: ' . $id_client);
+
+        // returns to the agent's main page
+        $this->my_clients();
     }
 }
