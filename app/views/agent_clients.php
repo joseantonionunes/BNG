@@ -6,10 +6,10 @@
 
             <div class="row">
                 <div class="col">
-                    <h5><i class="fa-solid fa-user-tie me-2"></i>Agente: <strong>[nome do agente]</strong></h5>
+                    <h5><i class="fa-solid fa-user-tie me-2"></i>Agente: <strong><?= $user->name ?></strong></h5>
                 </div>
                 <div class="col text-end">
-                    <a href="#" class="btn btn-secondary"><i class="fa-solid fa-upload me-2"></i></i>Carregar ficheiro</a>
+                    <a href="?ct=agent&mt=upload_file_frm" class="btn btn-secondary"><i class="fa-solid fa-upload me-2"></i></i>Carregar ficheiro</a>
                     <a href="?ct=agent&mt=new_client_frm" class="btn btn-secondary"><i class="fa-solid fa-plus me-2"></i>Novo cliente</a>
                 </div>
             </div>
