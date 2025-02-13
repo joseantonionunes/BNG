@@ -22,5 +22,12 @@
         <link rel="stylesheet" href="assets/flatpickr/flatpickr.min.css">
         <script src="assets/flatpickr/flarpickr.js"></script>
     <?php endif; ?>
+
+    <!-- jquery -->
+     <script src="assets/jquery/jquery-3.6.0.min.js"></script>
+
+     <-- datatables -->
+     <link rel="stylesheet" href="assets/datatables/datatables.min.css">
+     <script src="assets/datatables/datatables.min.js"></script>
 </head>
 <body>
