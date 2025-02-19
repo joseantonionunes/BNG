@@ -540,5 +540,44 @@ class Agent extends BaseController{
             $this->upload_file_frm();
         }
     }
+
+    // ===========================================================
+    public function export_clients_xlsx(){
+        if (!check_session() || $_SESSION['nome']->profile != 'agent'){
+            header('Location: index.php');
+        }
+
+        // get all agent clients
+        $model = new Agents();
+        $results = $model->get_agent_clients($_SESSION['user']->id);
+
+        // add header to collection
+        $data[] = ['name', 'gender', 'birthdate', 'email', 'phone', 'interests', 'created_at', 'update_at'];
+
+        // place all clients to the $data collection
+        foreach($results['data'] as $client){
+            // remove the first property (id)
+            unset($client->id);
+
+            // add data as array (original $client is a stdClass object)
+            $data[] = (array)$client;
+        }
+
+        // store the data into the XSLX file
+        $filename = 'output_' . time() . '.xlsx';
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $spreadsheet->removeSheetByIndex(0);
+        $worksheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'dados');
+        $spreadsheet->addSheet($worksheet);
+        $worksheet->fromArray($data);
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.opensmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . urldecode($filename).'"');
+        $writer->save('php://output');
+
+        // logger
+        logger(get_active_user_name() . " - fez dowload da lista de clientes para o ficheiro: " . $filename . " | total: " . count($data) - 1 . " registos.");
+    }
     
 }
