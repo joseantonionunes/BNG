@@ -5,7 +5,7 @@ namespace bng\Controllers;
 use bng\Controllers\BaseController;
 use bng\Models\Agents;
 
-ini_set('memory_limit', '512M');
+ini_set('memory_limit', '712M');
 
 class Main extends BaseController
 {
@@ -27,7 +27,6 @@ class Main extends BaseController
     }
 
     // ===========================================================
-
     // LOGIN
     public function login_frm()
     {
@@ -64,7 +63,6 @@ class Main extends BaseController
     }
 
     // ===========================================================
-
     public function login_submit()
     {
 
@@ -167,4 +165,159 @@ class Main extends BaseController
         // go to index (login form)
         $this->index();
     }
+
+    // ===========================================================
+    public function change_password_frm() {
+        if(!check_session()){
+            $this->index();
+            return;
+        }
+
+        $data['user'] = $_SESSION['user'];
+
+        // check for validation errors
+        if(!empty($_SESSION['validation_errors'])){
+            $data['validation_errors'] = $_SESSION['validation_errors'];
+            unset($_SESSION['validation_errors']);
+        }
+
+        // check for server errors
+        if (!empty($_SESSION['server_errors'])){
+            $data['server_errors'] = $_SESSION['server_errors'];
+            unset($_SESSION['server_errors']);
+        }
+
+        $this->view('layouts/html_header');
+        $this->view('navbar', $data);
+        $this->view('profile_change_password_frm', $data);
+        $this->view('footer');
+        $this->view('layouts/html_footer');
+
+    }
+
+    // ===========================================================
+    public function change_password_submit() {
+        if(!check_session()){
+            $this->index();
+            return;
+        }
+
+        // check if there was a post request
+        if($_SERVER['REQUEST_METHOD'] != 'POST'){
+            $this->index();
+            return;
+        }
+
+        // validation errors
+        $validation_errors = [];
+
+        // check if the input fields are filled
+        if(empty($_POST['text_current_password'])){
+            $validation_errors[] = "password atual é de preenchimento obrigatório.";
+            $_SESSION['validation_errors'] = $validation_errors;
+            $this->change_password_frm();
+            return;
+        }
+
+        if(empty($_POST['text_new_password'])){
+            $validation_errors[] = "A repetição da nova password é de preenchimento obrigatório.";
+            $_SESSION['validation_errors'] = $validation_errors;
+            $this->change_password_frm();
+            return;
+        }
+
+        // get the input values
+        $current_password = $_POST['text_current_password'];
+        $new_password = $_POST['text_new_password'];
+        $repeat_new_password = $_POST['text_repeat_new_password'];
+
+        // check if all passwords have more than 6 and less than 12 characters
+        if(strlen($current_password < 6 || strlen($current_password) > 12)){
+            $_SESSION['validation_errors'] = $validation_errors;
+            $this->change_password_frm();
+            return;
+        }
+
+        if(strlen($new_password < 6 || strlen($new_password) > 12)){
+            $validation_errors[] = "A nova password deve ter entre 6 e 12 caracteres.";
+            $_SESSION['validation_errors'] = $validation_errors;
+            $this->change_password_frm();
+            return;
+        }
+
+        if(strlen($repeat_new_password < 6 || strlen($new_password) > 12)){
+            $validation_errors[] = "A nova password deve ter entre 6 e 12 caracteres.";
+            $_SESSION['validation_errors'] = $validation_errors;
+            $this->change_password_frm();
+            return;
+        }
+
+        if(strlen($repeat_new_password < 6 || strlen($repeat_new_password) > 12)){
+            $validation_errors[] = "A repetição da nova password deve ter entre 6 e 12 caracteres.";
+            $_SESSION['validation_errors'] = $validation_errors;
+            $this->change_password_frm();
+            return;
+        }
+
+        //check if all password heve, at least one upper, one lower and one digit
+
+        // use positive look ahead
+        if(!preg_match("/(?=.*[a-z])(?=.*[A-Z])/", $current_password)){
+            $validation_errors[] = "A password atual deve ter, pelo menos, uma maiúscula, uma minúscula e um digito.";
+            $_SESSION['validation_errors'] = $validation_errors;
+            $this->change_password_frm();
+            return;
+        }
+
+        if(!preg_match("/(?=.*[a-z])(?=.*[A-Z])/", $new_password)) {
+            $validation_errors[] = "A nova password deve ter, pelo menos, uma maiúscula, uma minúscula e um digito.";
+            $_SESSION['validation_errors'] = $validation_errors;
+            $this->change_password_frm();
+            return;
+        }
+        if(!preg_match("/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])/", $repeat_new_password)){
+            $validation_errors[] = "A nova password deve ter, pelo menos, uma maiúscula, uma minúscula e um digito.";
+            $_SESSION['validation_errors'] = $validation_errors;
+            $this->change_password_frm();
+            return;
+        }
+
+        // check if the new password and repeat new password are equal values
+        if($new_password != $repeat_new_password){
+            $validation_errors[] = "A nova password e a sua repetição não são iguais.";
+            $_SESSION['validation_errors'] = $validation_errors;
+            $this->change_password_frm();
+            return;
+        }
+
+        // check if the current password is equal to the database
+        $model = new Agents();
+        $results = $model->check_current_password($current_password);
+
+        // check if the current password is correct
+        if(!$results['status']) {
+            // current password does not match the one existing in the database
+            $server_errors[] = "A password atual não está correta.";
+            $_SESSION['server_errors'] = $server_errors;
+            $this->change_password_frm();
+            return;
+        }
+
+        // form data is ok. Updates the password in the database
+        $model->update_agent_password($new_password);
+
+        // logger
+        $username = $_SESSION['user']->name;
+        logger("$username - password alternada com sucesso no perfil de utilizador.");
+
+        // show view with success information
+        $data['user'] = $_SESSION['user'];
+        $this->view(['layouts/html_header']);
+        $this->view('navbar', $data);
+        $this->view('profile_chenge_password_success');
+        $this->view('footer');
+        $this->view('layouts/html_footer');
+
+    }
+
 }
