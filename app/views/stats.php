@@ -44,7 +44,7 @@
                 <div class="col-sm-6 col-12 p-1">
                     <div class="card p-3">
                         <h4><i class="fa-solid fa-users me-2"></i>Gráfico</h4>
-                        <canvas id="chartjs_chart" height="400px"></canvas>
+                        <canvas id="chartjs_chart" height="300px"></canvas>
                     </div>
                 </div>
             </div>
@@ -54,7 +54,48 @@
                     
                     <div class="card p-3">
                         <h4><i class="fa-solid fa-list-ul me-2"></i>Dados estatísticos globais</h4>
-                        [dados estatísticos]
+                        <div class="row justify-content-center">
+                            <div class="col-5">
+                                <table class="table table-striped">
+                                    <tr>
+                                        <td class="text-start">Número total de agentes:</td>
+                                        <td class="text-start"><strong><?= $global_stats['total_agents']->value ?></strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-start">Número total de clientes:</td>
+                                        <td class="text-start"><strong><?= $global_stats['total_clients']->value ?></strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-start">Número total de clientes inativos:</td>
+                                        <td class="text-start"><strong><?= $global_stats['total_deleted_clients']->value ?></strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-start">Número médio de clientes por agente:</td>
+                                        <td class="text-start"><strong><?= sprintf("%d", $global_stats['average_clients_per_agent']->value) ?></strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-start">Idade do cliente mais novo:</td>
+                                        <td class="text-start"><strong><?= empty($global_stats['younger_client']->value) ? '' : $global_stats['younger_client']->value ?></strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-start">Idade do cliente mais velho:</td>
+                                        <td class="text-start"><strong><?= empty($global_stats['oldest_client']->value) ? '' : $global_stats['oldest_client']->value ?></strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-start">Média de idades dos clientes:</td>
+                                        <td class="text-start"><strong><?= sprintf("%.2f", $global_stats['average_age']->value) ?></strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-start">Percentagem de clientes homens:</td>
+                                        <td class="text-start"><strong><?= sprintf("%.2f", $global_stats['percentage_males']->value) . "%" ?></strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-start">Percentagem de clientes mulheres:</td>
+                                        <td class="text-start"><strong><?= sprintf("%.2f", $global_stats['percentage_females']->value) . '%' ?></strong></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
                     </div>
 
                 </div>
