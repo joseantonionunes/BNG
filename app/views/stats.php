@@ -96,6 +96,11 @@
                                 </table>
                             </div>
                         </div>
+
+                        <div class="text-center">
+                        <a href="?ct=admin&mt=create_pdf_report" target="_blank" class="btn btn-secondary px-4"><i class="fa-solid fa-file-pdf me-2">Criar relatório em PDF</i></a>
+                        </div>           
+
                     </div>
 
                 </div>
