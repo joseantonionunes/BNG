@@ -140,4 +140,25 @@ class AdminModel extends BaseModel
 
         return $results;
     }
+
+    // =======================================================
+    public function check_if_user_exists_with_same_name($name)
+    {
+        // check if there is a user with the $name
+        $params = [
+            ':name' => $name
+        ];
+
+        $this->db_connect();
+        $results = $this->query(
+            "SELECT id FROM agents " . 
+            "WHERE AES_ENCRYPT(:name, '" . MYSQL_AES_KEY . "') = name"
+        , $params);
+
+        if($results->affected_rows == 0){
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

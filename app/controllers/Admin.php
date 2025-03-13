@@ -245,4 +245,118 @@ class Admin extends BaseController{
         $this->view('footer');  
         $this->view('layouts/html_footer');  
     }
+
+    // =======================================================
+    public function new_agent_frm(){
+        // check id session has a user with admin profile
+        if(!check_session() || $_SESSION['user']->profile != 'admin'){
+            header('Location: index.php');
+        }
+
+        $data['user'] = $_SESSION['user'];
+
+        // check for validation error
+        if(isset($_SESSION['validation_error'])){
+            $data['validation_error'] = $_SESSION['validation_error'];
+            unset($_SESSION['validation_error']);
+        }
+
+        // check for server error
+        if(isset($_SESSION['server_error'])){
+            $data['server_error'] = $_SESSION['server_error'];
+            unset($_SESSION['server_error']);
+        }
+
+        $this->view('layouts/html_header', $data);
+        $this->view('navbar', $data);
+        $this->view('agents_add_new_frm', $data);
+        $this->view('footer');
+        $this->view('layouts/html_footer');
+    }
+
+    // =======================================================
+    public function new_agent_submit()
+    {
+        // check if session has a user with admin profile
+        if (!check_session() || $_SESSION['user']->profile != 'admin') {
+            header('Location: index.php');
+        }
+
+        // check if there was a post
+        if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+            header('Location: index.php');
+        }
+
+        // form validation
+        $validation_error = null;
+
+        // check if agent is a valid email
+        if (empty($_POST['text_name']) || !filter_var($_POST['text_name'], FILTER_VALIDATE_EMAIL)) {
+            $validation_error = "O nome do agente deve ser um email válido.";
+        }
+
+        // check if profile is valid
+        $valid_profiles = ['admin', 'agent'];
+        if (empty($_POST['select_profile']) || !in_array($_POST['select_profile'], $valid_profiles)) {
+            $validation_error = "O perfil selecionado é inválido.";
+        }
+
+        if (!empty($validation_error)) {
+            $_SESSION['validation_error'] = $validation_error;
+            $this->new_agent_frm();
+            return;
+        }
+
+        // check if there is already a agent with the same username
+        $model = new AdminModel();
+        $results = $model->check_if_user_exists_with_same_name($_POST['text_name']);
+
+        if ($results) {
+
+            // there is an agent with that name (email)
+            $_SESSION['server_error'] = "Já existe um agente com o mesmo nome.";
+            $this->new_agent_frm();
+            return;
+        }
+
+        // add new agent to the database
+        $results = $model->add_new_agent($_POST);
+
+        if ($results['status'] == 'error') {
+
+            // logger
+            logger(get_active_user_name() . " - aconteceu um erro na criação de novo registo de agente.");
+            header('Location: index.php');
+        }
+
+        // send email with purl
+        $url = explode('?', $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
+        $url = $url[0] . '?ct=main&mt=define_password&purl=' . $results['purl'];
+        $email = new SendEmail();
+        $data = [
+            'to' => $_POST['text_name'],
+            'link' => $url
+        ];
+
+        $results = $email->send_email(APP_NAME . ' Conclusão do registo de agente', 'email_body_new_agent', $data);
+        if ($results['status'] == 'error') {
+
+            // logger
+            logger(get_active_user_name() . " - não foi possível enviar o email para conclusão do registo: " . $_POST['text_name'] . ' - erro: ' . $results['message'], 'error');
+            die($results['message']);
+        }
+
+        // logger
+        logger(get_active_user_name() . " - enviado com sucesso email para conclusão do registo: " . $_POST['text_name']);
+
+        // display the success page
+        $data['user'] = $_SESSION['user'];
+        $data['email'] = $_POST['text_name'];
+
+        $this->view('layouts/html_header', $data);
+        $this->view('navbar', $data);
+        $this->view('agents_email_sent', $data);
+        $this->view('footer');
+        $this->view('layouts/html_footer');
+    }
 }
