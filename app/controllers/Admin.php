@@ -4,6 +4,7 @@ namespace bng\Controllers;
 
 use bng\Controllers\BaseController;
 use bng\Models\AdminModel;
+use bng\System\SendEmail;
 use bng\Models\BaseModel;
 use Monolog\Handler\PushoverHandler;
 

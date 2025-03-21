@@ -3,7 +3,7 @@
         'name' => 'sys4soft/bng',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '81f46162cb813d40510e22a0490b661abbf8e666',
+        'reference' => 'd87636d8867493a1750a710bc3ba7456b1df2ce7',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -100,6 +100,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'phpmailer/phpmailer' => array(
+            'pretty_version' => 'v6.9.3',
+            'version' => '6.9.3.0',
+            'reference' => '2f5c94fe7493efc213f643c23b1b1c249d40f47e',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../phpmailer/phpmailer',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'phpoffice/phpspreadsheet' => array(
             'pretty_version' => '4.0.0',
             'version' => '4.0.0.0',
@@ -172,7 +181,7 @@
         'sys4soft/bng' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '81f46162cb813d40510e22a0490b661abbf8e666',
+            'reference' => 'd87636d8867493a1750a710bc3ba7456b1df2ce7',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

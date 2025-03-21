@@ -320,4 +320,9 @@ class Main extends BaseController
 
     }
 
+    // ===========================================================
+    public function define_password($purl = '') {
+        die($purl);
+    }
+
 }
