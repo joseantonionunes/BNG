@@ -316,4 +316,48 @@ class Agents extends BaseModel
             "WHERE id = :id",
             $params);
     }
+
+    // =======================================================
+    public function check_new_agent_purl($purl){
+
+        // check if there is a new agent with this purl
+        $params = [
+            ':purl' => $purl
+        ];
+        $this->db_connect();
+        $results = $this->query(
+            "SELECT id FROM agents WHERE purl = :purl",
+            $params);
+        
+            if($results->affected_rows == 0) {
+                return [
+                    'status' => false
+                ];
+            } else {
+                return [
+                    'status' => true,
+                    'id' => $results->results[0]->id
+                ];
+            }
+    }
+
+    // =======================================================
+    public function set_agent_password($id, $new_passwrd)
+    {
+        // updates the current user password
+        $params = [
+            ':passwrd' => password_hash($new_passwrd, PASSWORD_DEFAULT),
+            ':id' => $id
+        ];
+
+        $this->db_connect();
+        $this->non_query(
+            "UPDATE agents SET " . 
+            "passwrd = :passwrd, " . 
+            "purl = NULL, " .
+            "updated_at = NOW() " . 
+            "WHERE id = :id"
+        , $params);
+    }
+
 }
