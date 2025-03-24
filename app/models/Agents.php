@@ -17,7 +17,8 @@ class Agents extends BaseModel
        $this->db_connect();
        $results = $this->query(
             "SELECT id, password FROM agents" .
-            "WHERE AES_ENCRYPT(:username, '" .MYSQL_AES_KEY."') = name"
+            "WHERE AES_ENCRYPT(:username, '" .MYSQL_AES_KEY."') = name " .
+            "AND deleted_at IS NULL"
             , $params);
 
         // if there is no user, return false
