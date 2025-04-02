@@ -556,4 +556,80 @@ class Admin extends BaseController{
         $this->view('footer');
         $this->view('layouts/html_footer');
     }
+
+    // =======================================================
+    public function recover_agent_confirm($id = '')
+    {
+        // check if session has a user with admin profile
+        if (!check_session() || $_SESSION['user']->profile != 'admin') {
+            header('Location: index.php');
+        }
+
+        // check if id is valid
+        $id = aes_decrypt($id);
+        if (!$id) {
+            header('Location: index.php');
+        }
+
+        // get agent data
+        $model = new AdminModel();
+        $results = $model->recover_agent($id);
+
+        if ($results->status == 'success') {
+
+            // logger
+            logger(get_active_user_name() . " - recuperado com sucesso o agente ID: $id");
+        } else {
+
+            // logger
+            logger(get_active_user_name() . " - aconteceu um erro na recuperação do agente ID: $id", 'error');
+        }
+
+        // go to the main page
+        $this->agents_management();
+    }
+
+
+    // =======================================================
+    public function export_agents_XLSX()
+    {
+        // check if session has a user with admin profile
+        if (!check_session() || $_SESSION['user']->profile != 'admin') {
+            header('Location: index.php');
+        }
+
+        // get agents data
+        $model = new AdminModel();
+        $results = $model->get_agents_data_and_total_clients();
+        $results = $results->results;
+
+        // add header to collection
+        $data[] = ['name', 'profile', 'active', 'last login', 'created at', 'updated at', 'deleted at', 'total active clients', 'total deleted clients'];
+
+        // place all agents in the $data collection
+        foreach ($results as $agent) {
+
+            // remove the first property (id)
+            unset($agent->id);
+
+            // add data as array (original $client is a stdClass object)
+            $data[] = (array)$agent;
+        }
+
+        // store the data into the XSLX file
+        $filename = 'output_' . time() . '.xlsx';
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $spreadsheet->removeSheetByIndex(0);
+        $worksheet = new \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet($spreadsheet, 'dados');
+        $spreadsheet->addSheet($worksheet);
+        $worksheet->fromArray($data);
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . urlencode($filename) . '"');
+        $writer->save('php://output');
+
+        // logger
+        logger(get_active_user_name() . " - fez download da lista de agentes para o ficheiro: " . $filename . " | total: " . count($data) - 1 . " registos.");
+    }
 }
