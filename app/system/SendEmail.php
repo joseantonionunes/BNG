@@ -48,9 +48,16 @@ class SendEmail {
     }
 
     // =======================================================
-    public function email_body_new_agent($data){
+    private function email_body_new_agent($data){
         $html = '<p>Para concluir o processo de registo de agente, clique no link abaixo</p>';
         $html .= '<a herf="'.$data['link'].'">Concluir registo de agente</a>';
+        return $html;
+    }
+
+    // =======================================================
+    private function codigo_recuperar_password($data) {
+        $html = "<p>Para definir a sua password, use o seguinte codigo:</p>";
+        $html .= "<h3>{$data['code']}</h3>";
         return $html;
     }
 }

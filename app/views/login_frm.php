@@ -24,7 +24,7 @@
                             </div>
 
                             <div class="mb-3 text-center">
-                                <a href="#">Esqueci-me da password!</a>
+                                <a href="?ct=main&mt=reset_password">Esqueci-me da password!</a>
                             </div>
 
                             <?php if(!empty($validation_errors)): ?>

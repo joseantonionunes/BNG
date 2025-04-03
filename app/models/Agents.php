@@ -361,4 +361,91 @@ class Agents extends BaseModel
         , $params);
     }
 
+    // =======================================================
+    public function set_code_for_recover_password($username)
+    {
+        // sets a code to recover the password, if the account exists
+        $params = [
+            ':username' => $username
+        ];
+        $this->db_connect();
+        $results = $this->query(
+            "SELECT id FROM agents " . 
+            "WHERE AES_ENCRYPT(:username, '" . MYSQL_AES_KEY . "') = name " . 
+            "AND passwrd IS NOT NULL " .
+            "AND deleted_at IS NULL"
+        , $params);
+
+        // check if no agent was found
+        if($results->affected_rows == 0){
+            return [
+                'status' => 'error'
+            ];
+        }
+
+        // the agent was found
+
+        // generate code
+        $code = rand(100000, 999999);
+        $id = $results->results[0]->id;
+        $params = [
+            ':id' => $id,
+            ':code' => $code
+        ];
+
+        $results = $this->non_query(
+            "UPDATE agents SET " . 
+            "code = :code " . 
+            "WHERE id = :id"
+        , $params);
+
+        return [
+            'status' => 'success',
+            'id' => $id,
+            'code' => $code
+        ];
+    }
+
+    // =======================================================
+    public function check_if_reset_code_is_correct($id, $code) {
+        // check id the reset code is equal to the stored in the agent row
+        $params = [
+            ':id' => $id,
+            ':code' => $code
+        ];
+
+        $this->db_connect();
+        $results = $this->query(
+            "SELECT id FROM agents " . 
+            "WHERE id = :id AND code = :code"
+        , $params);
+        
+        if($results->affected_rows == 0) {
+            return [
+                'status' => false
+            ];
+        } else {
+            return [
+                'status' => true
+            ];
+        }
+    }
+
+    // =======================================================
+    public function change_agent_password($id, $new_password) {
+        // updates the current user password
+        $params = [
+            ':id' => $id,
+            ':passwrd' => password_hash($new_password, PASSWORD_DEFAULT)
+        ];
+
+        $this->db_connect();
+        $this->non_query(
+            "UPDATE agents SET " . 
+            "passwrd = :passwrd, " . 
+            "updated_at = NOW() " . 
+            "WHERE id = :id"
+            , $params);
+        
+    }
 }
